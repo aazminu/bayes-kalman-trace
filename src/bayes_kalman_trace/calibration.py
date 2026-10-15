@@ -67,6 +67,8 @@ def evaluate_posterior_calibration(
 ) -> CalibrationMetrics:
     if len(predicted_probs) != len(true_labels) or not predicted_probs:
         raise ValueError("predicted_probs and true_labels must be non-empty and equal length")
+    if num_bins < 2:
+        raise ValueError("num_bins must be >= 2")
     if any(y not in (0, 1) for y in true_labels):
         raise ValueError("true_labels must be binary (0 or 1)")
     if any(p < 0.0 or p > 1.0 or math.isnan(p) for p in predicted_probs):

@@ -100,6 +100,8 @@ class KinematicRTSSmoother:
     ) -> SmoothedTrajectoryState:
         if not position_observations:
             raise ValueError("position_observations cannot be empty")
+        if init_var <= 0.0 or math.isnan(init_var):
+            raise ValueError("init_var must be positive")
 
         n = len(position_observations)
         x_pred_list: List[Tuple[float, float]] = []

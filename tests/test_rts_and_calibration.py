@@ -46,3 +46,10 @@ def test_laplace_histogram_and_posterior_calibration() -> None:
         evaluate_posterior_calibration([], [])
     with pytest.raises(ValueError):
         evaluate_posterior_calibration([1.2], [1])
+    with pytest.raises(ValueError, match="num_bins"):
+        evaluate_posterior_calibration([0.5], [1], num_bins=0)
+
+    smoother = KinematicRTSSmoother()
+    with pytest.raises(ValueError, match="init_var"):
+        smoother.filter_and_smooth([1.0, 2.0], init_var=-1.0)
+
