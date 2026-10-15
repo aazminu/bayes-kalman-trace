@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import random
+import sys
 from pathlib import Path
 from typing import Any, Dict, List, Sequence
 
@@ -36,11 +37,19 @@ def run_benchmark(seed: int = 42) -> List[Dict[str, Any]]:
 
     # 3. Laplace histogram likelihood & posterior ECE/Brier calibration
     hist = LaplaceHistogramLikelihood(min_val=0.0, max_val=30.0, num_bins=15, laplace_alpha=1.0)
-    hist.fit([10.2, 11.5, 10.8, 12.1, 11.0, 10.9, 11.3])
+    hist_samples = [11.0 + rng.gauss(0.0, 0.6) for _ in range(12)]
+    hist.fit(hist_samples)
     ll_gap = hist.log_likelihood(11.0) - hist.log_likelihood(28.0)
 
     cal = evaluate_posterior_calibration(
-        predicted_probs=[0.95, 0.92, 0.88, 0.08, 0.04, 0.10],
+        predicted_probs=[
+            0.95 + rng.uniform(-0.02, 0.02),
+            0.92 + rng.uniform(-0.02, 0.02),
+            0.88 + rng.uniform(-0.02, 0.02),
+            0.08 + rng.uniform(-0.02, 0.02),
+            0.04 + rng.uniform(-0.02, 0.02),
+            0.10 + rng.uniform(-0.02, 0.02),
+        ],
         true_labels=[1, 1, 1, 0, 0, 0],
         num_bins=5,
     )
@@ -66,8 +75,8 @@ def run_benchmark(seed: int = 42) -> List[Dict[str, Any]]:
             "benchmark": "posterior_calibration_ece",
             "PrimaryMetric": "expected_calibration_error",
             "value": round(cal.expected_calibration_error, 4),
-            "SecondaryMetric": "brier_score_and_ll_gap",
-            "secondary_value": round(cal.brier_score + max(0.0, ll_gap) * 0.0, 4),
+            "SecondaryMetric": "log_likelihood_gap",
+            "secondary_value": round(ll_gap, 4),
             "status": "CALIBRATED" if cal.brier_score < 0.02 and ll_gap > 0 else "UNCALIBRATED",
         },
     ]
@@ -122,8 +131,12 @@ def main(argv: Sequence[str] | None = None) -> int:
         else format_markdown_table(rows)
     )
     if args.output is not None:
-        args.output.parent.mkdir(parents=True, exist_ok=True)
-        args.output.write_text(rendered + "\n", encoding="utf-8")
+        try:
+            args.output.parent.mkdir(parents=True, exist_ok=True)
+            args.output.write_text(rendered + "\n", encoding="utf-8")
+        except OSError as exc:
+            print(f"Error writing output to {args.output}: {exc}", file=sys.stderr)
+            return 1
     print(rendered)
     return 0
 
