@@ -1,0 +1,29 @@
+{
+  "title": "BayesKalmanTrace: Recursive Bayesian State-Space Filter & Rauch–Tung–Striebel Backward Smoother with Analytic Dropout Marginalization",
+  "upload_type": "software",
+  "description": "BayesKalmanTrace is an open-source biophysical and kinematic state-space inference package developed by the Computational Genomics & Agentic Systems (CGAS) Lab at Northwestern University. It implements a discrete-time Kalman filter paired with Rauch–Tung–Striebel (RTS) backward smoothing and analytic missing-data marginalization, maintaining low calibration error across high sensor dropout rates.",
+  "creators": [
+    {
+      "name": "Azmi, Abdullah",
+      "affiliation": "Northwestern University, Department of Computer Science & NICO",
+      "orcid": "0009-0005-2720-3347"
+    }
+  ],
+  "keywords": [
+    "State-Space Models",
+    "Kalman Filter",
+    "Rauch-Tung-Striebel",
+    "Bayesian Inference",
+    "Trajectory Smoothing",
+    "Sensor Dropout",
+    "Kinematics"
+  ],
+  "license": "Apache-2.0",
+  "related_identifiers": [
+    {
+      "identifier": "https://abdullahazmi.com/lab/",
+      "relation": "isDocumentedBy",
+      "scheme": "url"
+    }
+  ]
+}
